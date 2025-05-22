@@ -1,0 +1,36 @@
+{
+    "manifest_version": 3,
+    "name": "Twitch Chat for Lekker Spelen",
+    "version": "1.0",
+    "description": "Displays archived Twitch chats alongside Lekker Spelen's YouTube VODs.",
+    "permissions": [
+        "storage"
+    ],
+    "host_permissions": [
+        "https://www.youtube.com/*"
+    ],
+    "content_scripts": [
+        {
+            "matches": [
+                "https://www.youtube.com/watch*"
+            ],
+            "js": [
+                "content.js"
+            ],
+            "css": [
+                "style.css"
+            ]
+        }
+    ],
+    "web_accessible_resources": [
+        {
+            "resources": [
+                "fonts/*.woff2",
+                "data/chat_example.json"
+            ],
+            "matches": [
+                "*://www.youtube.com/*"
+            ]
+        }
+    ]
+}
