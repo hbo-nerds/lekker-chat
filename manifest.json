@@ -26,7 +26,8 @@
         {
             "resources": [
                 "fonts/*.woff2",
-                "data/chat_example.json"
+                "data/yt-ttv.json",
+                "data/image_ids.json"
             ],
             "matches": [
                 "*://www.youtube.com/*"
