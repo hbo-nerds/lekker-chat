@@ -4,8 +4,7 @@
     "version": "1.0",
     "description": "Displays archived Twitch chats alongside Lekker Spelen's YouTube VODs.",
     "permissions": [
-        "storage",
-        "unlimitedStorage"
+        "storage"
     ],
     "host_permissions": [
         "https://www.youtube.com/*"

@@ -202,11 +202,13 @@ async function onVideoReady() {
 }
 
 const init = async () => {
-    const ttvLink = await browser.runtime.sendMessage({type: "checkStreamId", body: { streamId: "123123" }})
-
     const urlParams = new URLSearchParams(window.location.search);
     const videoId = urlParams.get("v");
-    if (!videoId || !ttvLink[videoId]) {
+
+    const streamId = await browser.runtime.sendMessage({type: "checkVideoId", body: { videoId }})
+    console.log(streamId);
+    
+    if (!videoId || !streamId) {
         if (shownMessages) {
             shownMessages.clear();
         }
@@ -231,8 +233,11 @@ const init = async () => {
     // const bigDataResponse = await fetch(`http://127.0.0.1:3000/chat_${ttvLink[videoId]}.json`);
     // chatData = await bigDataResponse.json();
     console.log("Loading chat data");
-    chatDataResponse = await fetch(chrome.runtime.getURL("data/chat_373395874.json"));
-    chatData = await chatDataResponse.json();
+
+    let chatData = await browser.runtime.sendMessage({type: "fetchChatLogs", body: { streamId }});
+
+    // chatDataResponse = await fetch(chrome.runtime.getURL("data/chat_373395874.json"));
+    // chatData = await chatDataResponse.json();
     console.log(chatData);
     await waitForChatContainer();
     await onVideoReady();
