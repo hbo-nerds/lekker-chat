@@ -4,11 +4,15 @@
     "version": "1.0",
     "description": "Displays archived Twitch chats alongside Lekker Spelen's YouTube VODs.",
     "permissions": [
-        "storage"
+        "storage",
+        "unlimitedStorage"
     ],
     "host_permissions": [
         "https://www.youtube.com/*"
     ],
+    "background": {
+        "scripts": ["background.js"]
+    },
     "content_scripts": [
         {
             "matches": [
@@ -27,7 +31,8 @@
             "resources": [
                 "fonts/*.woff2",
                 "data/yt-ttv.json",
-                "data/image_ids.json"
+                "data/image_ids.json",
+                "data/chat_373395874.json"
             ],
             "matches": [
                 "*://www.youtube.com/*"

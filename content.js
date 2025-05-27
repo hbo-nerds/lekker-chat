@@ -2,6 +2,7 @@ let chatData;
 let imageData;
 let videoInterval;
 let chatInterval;
+let vodOffset = 362;
 
 function replaceEmotes(content) {
     if (!imageData || !imageData['emoticons']) return content;
@@ -71,7 +72,10 @@ function createChatMessage(msg) {
 
 let messageList;
 let shownMessages = new Set();
-let vod_offset = 362;
+
+function setVodOffset(offset) {
+    vodOffset = offset;
+}
 
 function showMessage(comment) {
     const isAtBottom = messageList.scrollTop == null ? false : Math.abs(messageList.scrollTop + messageList.clientHeight - messageList.scrollHeight) < 5;
@@ -82,6 +86,16 @@ function showMessage(comment) {
     if (isAtBottom) {
         messageList.scrollTop = messageList.scrollHeight;
     }
+}
+
+function injectOffsetControl() {
+    let container = document.getElementById("#above-the-fold");
+    let controls = document.createElement("div");
+    controls.id = "lc-controls";
+    let offsetControl = document.createElement("div").id("lc-offset-control");
+    offsetControl.textContent("Hier komt offset");
+    controls.appendChild(offsetControl);
+    container.prependChild(controls);
 }
 
 function injectChat(chatContainer) {
@@ -188,8 +202,7 @@ async function onVideoReady() {
 }
 
 const init = async () => {
-    const ttvLinkBlob = await fetch(chrome.runtime.getURL("data/yt-ttv.json"));
-    ttvLink = await ttvLinkBlob.json();
+    const ttvLink = await browser.runtime.sendMessage({type: "checkStreamId", body: { streamId: "123123" }})
 
     const urlParams = new URLSearchParams(window.location.search);
     const videoId = urlParams.get("v");
@@ -208,13 +221,19 @@ const init = async () => {
         return;
     }
 
+    // injectOffsetControl();
+
     if (!imageData) {
         const imageResponse = await fetch(chrome.runtime.getURL("data/image_ids.json"));
         imageData = await imageResponse.json();
     }
 
-    const bigDataResponse = await fetch(`http://127.0.0.1:3000/chat_${ttvLink[videoId]}.json`);
-    chatData = await bigDataResponse.json();
+    // const bigDataResponse = await fetch(`http://127.0.0.1:3000/chat_${ttvLink[videoId]}.json`);
+    // chatData = await bigDataResponse.json();
+    console.log("Loading chat data");
+    chatDataResponse = await fetch(chrome.runtime.getURL("data/chat_373395874.json"));
+    chatData = await chatDataResponse.json();
+    console.log(chatData);
     await waitForChatContainer();
     await onVideoReady();
 };
