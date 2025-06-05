@@ -10,7 +10,15 @@
         "https://www.youtube.com/*"
     ],
     "background": {
-        "scripts": ["background.js"]
+        "scripts": ["background.js", "popup/popup.js"]
+    },
+    "icons": {
+        "48": "assets/lekkerChat.png"
+    },    
+    "action": {
+        "default_title": "LekkerChat",
+        "default_popup": "popup.html",
+        "default_icon": "assets/lekkerChat.png"
     },
     "content_scripts": [
         {
