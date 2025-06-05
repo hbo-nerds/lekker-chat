@@ -64,6 +64,14 @@ function fetchChatLogs(streamId) {
     });
 }
 
+function fetchCurrentOffset() {
+    return vodOffset;
+}
+
+function setOffset(offset) {
+    vodOffset = offset;
+}
+
 browser.runtime.onMessage.addListener((data, sender) => {
     console.log("Message received from ", sender);
     if (data.type === "checkVideoId") {
@@ -71,5 +79,9 @@ browser.runtime.onMessage.addListener((data, sender) => {
         return checkVideoId(data.body.videoId);
     } else if (data.type === "fetchChatLogs") {
         return fetchChatLogs(data.body.streamId);
+    } else if (data.type === "fetchCurrentOffset") {
+        return fetchCurrentOffset();
+    } else if (data.type === "setOffset") {
+        setOffset(data.body.offset);
     }
 })
