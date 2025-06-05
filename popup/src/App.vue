@@ -24,7 +24,12 @@ export default {
 </script>
 
 <style>
+  html {
+    max-height: 15rem;
+  }
   body {
     width: 25rem;
+    height: auto;
+    padding: 1rem 2rem;
   }
 </style>
