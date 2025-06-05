@@ -149,12 +149,17 @@ function showPreviousMessages(second) {
 }
 
 function showMissedMessages(from, to) {
-    for (let sec = from; sec <= to; sec++) {
-        const missedComments = chatData.comments.filter(comment =>
-            (comment.content_offset_seconds + vod_offset) === sec && !shownMessages.has(comment)
-        );
-        missedComments.forEach(comment => showMessage(comment));
-    }
+    // for (let sec = from; sec <= to; sec++) {
+    //     const missedComments = chatData.comments.filter(comment =>
+    //         (comment.content_offset_seconds + vod_offset) === sec && !shownMessages.has(comment)
+    //     );
+    //     missedComments.forEach(comment => showMessage(comment));
+    // }
+
+    chatData.comments.filter(comment => {
+        let correctedContentOffset = comment.content_offset_seconds + vod_offset;
+        return correctedContentOffset >= from && correctedContentOffset <= to;
+    }).map(el => showMessage(el));
 }
 
 function showCurrentSecondMessages(currentSecond) {
@@ -198,7 +203,7 @@ async function onVideoReady() {
             lastSecond = currentSecond;
             showCurrentSecondMessages(currentSecond);
         }
-    }, 100);
+    }, 300);
 }
 
 const init = async () => {
