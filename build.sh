@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Twitch Chat Sync - Build Script
+# LekkerChat - Build Script
 # Creates distribution packages for Chrome and Firefox
 
 set -e
 
-echo "Building Twitch Chat Sync Extension..."
+echo "Building LekkerChat Extension..."
 
 # Create dist directories
 mkdir -p dist/chrome dist/firefox

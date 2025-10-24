@@ -1,5 +1,5 @@
 /**
- * Twitch Chat Sync Extension
+ * LekkerChat Extension
  * Synchronizes Twitch chat data with YouTube videos
  */
 
@@ -380,7 +380,7 @@ async function initConfig() {
             timeOffset: 900,
             enableSync: true,
             autoScroll: true,
-            environment: 'local'
+            environment: 'production'
         });
 
         config = settings;
@@ -391,7 +391,7 @@ async function initConfig() {
             timeOffset: 900,
             enableSync: true,
             autoScroll: true,
-            environment: 'local'
+            environment: 'production'
         };
     }
 }
@@ -407,7 +407,7 @@ function getTimeOffset() {
  * Get chat data URL based on environment
  */
 function getChatUrl(videoId) {
-    const environment = config?.environment || 'local';
+    const environment = config?.environment || 'production';
 
     if (environment === 'production') {
         return `https://lekkerspeuren.nl/chats/chat_${videoId}.json`;
@@ -525,6 +525,49 @@ function refreshChatWithNewOffset() {
 }
 
 /**
+ * Load offset data from GitHub and apply to config
+ */
+async function loadAndApplyOffsetData(videoId) {
+    try {
+        console.log('Loading offset data from GitHub for video:', videoId);
+
+        const response = await fetch('https://raw.githubusercontent.com/hbo-nerds/lekker-chat/master/data/timedata.json', {
+            method: 'GET',
+            headers: {
+                'Accept': 'application/json'
+            }
+        });
+
+        if (response.ok) {
+            const offsetData = await response.json();
+            console.log('Successfully loaded offset data from GitHub');
+
+            if (offsetData && offsetData[videoId]) {
+                const suggestedOffset = offsetData[videoId];
+                console.log('Found suggested offset for this video:', suggestedOffset, 'seconds');
+
+                // Update config with suggested offset
+                if (!config) {
+                    await initConfig();
+                }
+                config.timeOffset = suggestedOffset;
+
+                // Also save to storage so popup shows the correct value
+                await browserAPI.storage.local.set({ timeOffset: suggestedOffset });
+
+                console.log('Applied suggested offset:', suggestedOffset);
+            } else {
+                console.log('No offset data found for this video');
+            }
+        } else {
+            console.log('GitHub offset data returned status:', response.status);
+        }
+    } catch (error) {
+        console.log('Could not load offset data from GitHub:', error.message);
+    }
+}
+
+/**
  * Initialize the extension and start chat synchronization
  */
 const init = async () => {
@@ -551,6 +594,9 @@ const init = async () => {
         }
 
         console.log(`Found mapping for video ${videoId} -> Twitch ${ttvLink[videoId]}`);
+
+        // Load offset data from GitHub and apply if found
+        await loadAndApplyOffsetData(videoId);
 
         // Load image/emote data if not already loaded
         if (!imageData) {

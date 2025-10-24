@@ -1,5 +1,5 @@
 /**
- * Popup script for Twitch Chat Sync extension
+ * Popup script for LekkerChat extension
  */
 
 /**
@@ -98,7 +98,7 @@ const DEFAULT_SETTINGS = {
     timeOffset: 900, // 15 minutes default
     enableSync: true,
     autoScroll: true,
-    environment: 'local'
+    environment: 'production'
 };
 
 // Time conversion utilities
@@ -155,11 +155,6 @@ function initializeElements() {
         statusText: document.getElementById('statusText'),
         timeOffset: document.getElementById('timeOffset'),
         setCurrentTime: document.getElementById('setCurrentTime'),
-        enableSync: document.getElementById('enableSync'),
-        autoScroll: document.getElementById('autoScroll'),
-        environment: document.getElementById('environment'),
-        saveSettings: document.getElementById('saveSettings'),
-        resetChat: document.getElementById('resetChat'),
         reportIssue: document.getElementById('reportIssue')
     };
 }
@@ -172,85 +167,11 @@ async function loadSettings() {
         const result = await browserAPI.storage.local.get(DEFAULT_SETTINGS);
 
         elements.timeOffset.value = secondsToMMSS(result.timeOffset);
-        elements.enableSync.checked = result.enableSync;
-        elements.autoScroll.checked = result.autoScroll;
-        elements.environment.value = result.environment;
-
-        // Load offset data
-        await loadOffsetData();
 
         console.log('Settings loaded:', result);
     } catch (error) {
         console.error('Failed to load settings:', error);
         showMessage('Kan instellingen niet laden', 'error');
-    }
-}
-
-/**
- * Load offset data from multiple sources with fallbacks
- */
-async function loadOffsetData() {
-    try {
-        // Get current video ID first
-        const tabs = await browserAPI.tabs.query({ active: true, currentWindow: true });
-        if (!tabs[0] || !tabs[0].url) return;
-
-        const url = new URL(tabs[0].url);
-        const videoId = url.searchParams.get('v');
-        if (!videoId) return;
-
-        console.log('Loading offset data for video:', videoId);
-
-        // Multiple data sources in order of preference
-        const dataSources = [
-            {
-                name: 'GitHub (Primary)',
-                url: 'https://raw.githubusercontent.com/hbo-nerds/lekker-chat/master/timedata.json'
-            },
-            {
-                name: 'Lekkerspeuren.nl (Fallback)',
-                url: 'https://lekkerspeuren.nl/chats/timedata.json'
-            }
-        ];
-
-        let offsetData = null;
-
-        for (const source of dataSources) {
-            try {
-                console.log(`Trying ${source.name}:`, source.url);
-                const response = await fetch(source.url, {
-                    method: 'GET',
-                    headers: {
-                        'Accept': 'application/json',
-                        'Cache-Control': 'no-cache'
-                    }
-                });
-
-                if (response.ok) {
-                    offsetData = await response.json();
-                    console.log(`Successfully loaded offset data from ${source.name}`);
-                    break; // Success, stop trying other sources
-                } else {
-                    console.log(`${source.name} returned status:`, response.status);
-                }
-            } catch (sourceError) {
-                console.log(`${source.name} failed:`, sourceError.message);
-                continue; // Try next source
-            }
-        }
-
-        if (offsetData && offsetData[videoId]) {
-            const suggestedOffset = offsetData[videoId];
-            console.log('Found suggested offset:', suggestedOffset, 'seconds');
-            elements.timeOffset.value = secondsToMMSS(suggestedOffset);
-            showMessage(`Aanbevolen offset geladen: ${secondsToMMSS(suggestedOffset)}`, 'success');
-        } else if (offsetData) {
-            console.log('Offset data loaded but no entry found for video:', videoId);
-        } else {
-            console.log('No offset data could be loaded from any source');
-        }
-    } catch (error) {
-        console.log('Could not load offset data:', error);
     }
 }
 
@@ -270,9 +191,9 @@ async function saveSettings() {
 
         const settings = {
             timeOffset: timeOffsetSeconds,
-            enableSync: elements.enableSync.checked,
-            autoScroll: elements.autoScroll.checked,
-            environment: elements.environment.value
+            enableSync: true,
+            autoScroll: true,
+            environment: 'production'
         };
 
         await browserAPI.storage.local.set(settings);
@@ -305,17 +226,12 @@ function setupEventListeners() {
     // Set current time button
     elements.setCurrentTime.addEventListener('click', setCurrentVideoTime);
 
-    // Action buttons
-    elements.saveSettings.addEventListener('click', saveSettings);
-    elements.resetChat.addEventListener('click', resetChat);
+    // Report issue button
     elements.reportIssue.addEventListener('click', reportIssue);
 
     // Auto-save on input changes
     elements.timeOffset.addEventListener('change', saveSettings);
     elements.timeOffset.addEventListener('input', debounce(saveSettings, 500)); // Debounced for live updates
-    elements.enableSync.addEventListener('change', saveSettings);
-    elements.autoScroll.addEventListener('change', saveSettings);
-    elements.environment.addEventListener('change', saveSettings);
 }
 
 /**
@@ -411,24 +327,6 @@ function setStatus(message, type) {
         dot.classList.add('active');
     } else if (type === 'error') {
         dot.classList.add('error');
-    }
-}
-
-/**
- * Reset chat
- */
-async function resetChat() {
-    try {
-        const tabs = await browserAPI.tabs.query({ active: true, currentWindow: true });
-        if (tabs[0]) {
-            await browserAPI.tabs.sendMessage(tabs[0].id, {
-                action: 'resetChat'
-            });
-            showMessage('Chat gereset!', 'success');
-        }
-    } catch (error) {
-        console.error('Failed to reset chat:', error);
-        showMessage('Kan chat niet resetten', 'error');
     }
 }
 

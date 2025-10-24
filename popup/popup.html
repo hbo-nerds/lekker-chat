@@ -4,15 +4,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Twitch Chat Sync</title>
+    <title>LekkerChat</title>
     <link rel="stylesheet" href="popup.css">
 </head>
 
 <body>
     <div class="popup-container">
         <header>
-            <h1>Twitch Chat Sync</h1>
-            <p>voor Lekker Spelen</p>
+            <h1>LekkerChat</h1>
         </header>
 
         <main>
@@ -34,34 +33,6 @@
                     </div>
                     <p class="help-text">Verhoog als chat te vroeg verschijnt (vertraag chat start)</p>
                 </div>
-            </section>
-
-            <section class="settings">
-                <h3>Instellingen</h3>
-                <div class="setting-item">
-                    <label>
-                        <input type="checkbox" id="enableSync" checked>
-                        Chat synchronisatie inschakelen
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label>
-                        <input type="checkbox" id="autoScroll" checked>
-                        Automatisch scrollen
-                    </label>
-                </div>
-                <div class="setting-item">
-                    <label for="environment">Omgeving:</label>
-                    <select id="environment">
-                        <option value="local">Lokaal (127.0.0.1:3000)</option>
-                        <option value="production">Productie (lekkerspeuren.nl)</option>
-                    </select>
-                </div>
-            </section>
-
-            <section class="actions">
-                <button id="saveSettings" class="btn btn-primary">Instellingen Opslaan</button>
-                <button id="resetChat" class="btn btn-secondary">Chat Resetten</button>
             </section>
         </main>
 
