@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="nl">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Twitch Chat Sync</title>
+    <link rel="stylesheet" href="popup.css">
+</head>
+
+<body>
+    <div class="popup-container">
+        <header>
+            <h1>Twitch Chat Sync</h1>
+            <p>voor Lekker Spelen</p>
+        </header>
+
+        <main>
+            <section class="sync-status">
+                <div class="status-indicator" id="statusIndicator">
+                    <span class="status-dot"></span>
+                    <span id="statusText">Controleren...</span>
+                </div>
+            </section>
+
+            <section class="time-adjustment">
+                <h3>Chat Timing</h3>
+                <div class="time-controls">
+                    <label for="timeOffset">Chat Offset (mm:ss):</label>
+                    <div class="input-group">
+                        <input type="text" id="timeOffset" value="15:00" placeholder="mm:ss"
+                            pattern="^-?\d{1,2}:\d{2}$">
+                        <button id="setCurrentTime" class="btn btn-primary">Huidige tijd</button>
+                    </div>
+                    <p class="help-text">Verhoog als chat te vroeg verschijnt (vertraag chat start)</p>
+                </div>
+            </section>
+
+            <section class="settings">
+                <h3>Instellingen</h3>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="enableSync" checked>
+                        Chat synchronisatie inschakelen
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label>
+                        <input type="checkbox" id="autoScroll" checked>
+                        Automatisch scrollen
+                    </label>
+                </div>
+                <div class="setting-item">
+                    <label for="environment">Omgeving:</label>
+                    <select id="environment">
+                        <option value="local">Lokaal (127.0.0.1:3000)</option>
+                        <option value="production">Productie (lekkerspeuren.nl)</option>
+                    </select>
+                </div>
+            </section>
+
+            <section class="actions">
+                <button id="saveSettings" class="btn btn-primary">Instellingen Opslaan</button>
+                <button id="resetChat" class="btn btn-secondary">Chat Resetten</button>
+            </section>
+        </main>
+
+        <footer>
+            <div class="version">v1.0.0</div>
+            <div class="links">
+                <a href="#" id="reportIssue">Probleem Melden</a>
+            </div>
+        </footer>
+    </div>
+
+    <script src="popup.js"></script>
+</body>
+
+</html>

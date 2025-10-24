@@ -1,0 +1,8 @@
+<svg width="128" height="128" viewBox="0 0 128 128" xmlns="http://www.w3.org/2000/svg">
+    <rect width="128" height="128" fill="#9146ff" rx="16" />
+    <text x="64" y="70" font-family="Arial, sans-serif" font-size="40" font-weight="bold"
+        fill="white" text-anchor="middle">T</text>
+    <text x="64" y="95" font-family="Arial, sans-serif" font-size="20" fill="#ffffff"
+        text-anchor="middle">SYNC</text>
+    <circle cx="100" cy="28" r="12" fill="#00ff88" />
+</svg>

@@ -1,0 +1,264 @@
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    font-size: 14px;
+    background: #1a1a1a;
+    color: #ffffff;
+    width: 360px;
+    min-height: 500px;
+}
+
+.popup-container {
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+
+/* Header */
+header {
+    text-align: center;
+    border-bottom: 1px solid #333;
+    padding-bottom: 12px;
+}
+
+header h1 {
+    font-size: 18px;
+    font-weight: 600;
+    color: #9146ff;
+}
+
+header p {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+/* Status */
+.sync-status {
+    background: #2a2a2a;
+    padding: 12px;
+    border-radius: 8px;
+}
+
+.status-indicator {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #666;
+    animation: pulse 2s infinite;
+}
+
+.status-dot.active {
+    background: #00ff88;
+}
+
+.status-dot.error {
+    background: #ff4444;
+    animation: none;
+}
+
+@keyframes pulse {
+
+    0%,
+    100% {
+        opacity: 1;
+    }
+
+    50% {
+        opacity: 0.5;
+    }
+}
+
+/* Sections */
+section {
+    background: #2a2a2a;
+    padding: 16px;
+    border-radius: 8px;
+}
+
+section h3 {
+    font-size: 16px;
+    margin-bottom: 12px;
+    color: #ffffff;
+}
+
+section h4 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #ccc;
+}
+
+/* Time Controls */
+.time-controls {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.input-group {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.input-group input[type="number"] {
+    flex: 1;
+    padding: 8px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #fff;
+    text-align: center;
+}
+
+.input-group input[type="number"]:focus {
+    outline: none;
+    border-color: #9146ff;
+}
+
+.help-text {
+    font-size: 12px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+.preset-times {
+    margin-top: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.btn-preset {
+    padding: 8px 12px;
+    font-size: 12px;
+}
+
+/* Buttons */
+.btn {
+    background: #4a4a4a;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 10px 16px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: background-color 0.2s;
+}
+
+.btn:hover {
+    background: #555;
+}
+
+.btn-small {
+    padding: 6px 12px;
+    font-size: 12px;
+    min-width: 32px;
+}
+
+.btn-primary {
+    background: #9146ff;
+}
+
+.btn-primary:hover {
+    background: #7c3aed;
+}
+
+.btn-secondary {
+    background: #666;
+}
+
+.btn-secondary:hover {
+    background: #777;
+}
+
+/* Settings */
+.setting-item {
+    margin-bottom: 12px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.setting-item label {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    flex: 1;
+}
+
+.setting-item input[type="checkbox"] {
+    width: 16px;
+    height: 16px;
+}
+
+.setting-item select {
+    padding: 6px;
+    background: #333;
+    border: 1px solid #555;
+    border-radius: 4px;
+    color: #fff;
+    flex: 1;
+}
+
+.setting-item select:focus {
+    outline: none;
+    border-color: #9146ff;
+}
+
+/* Actions */
+.actions {
+    display: flex;
+    gap: 8px;
+}
+
+.actions .btn {
+    flex: 1;
+}
+
+/* Footer */
+footer {
+    text-align: center;
+    font-size: 12px;
+    color: #888;
+    border-top: 1px solid #333;
+    padding-top: 12px;
+    margin-top: 8px;
+}
+
+.links {
+    margin-top: 8px;
+}
+
+.links a {
+    color: #9146ff;
+    text-decoration: none;
+}
+
+.links a:hover {
+    text-decoration: underline;
+}
+
+/* Responsive adjustments */
+@media (max-width: 400px) {
+    body {
+        width: 100%;
+    }
+
+    .popup-container {
+        padding: 12px;
+    }
+}
