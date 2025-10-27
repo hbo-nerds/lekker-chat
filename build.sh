@@ -50,14 +50,14 @@ echo "✓ Firefox addon built in dist/firefox/"
 
 # Create zip files for distribution (zip contents directly, not folders)
 cd dist/chrome
-zip -r "../twitch-chat-sync-chrome.zip" .
+zip -r "../lekkerchat-chrome.zip" .
 cd ../firefox
-zip -r "../twitch-chat-sync-firefox.zip" .
+zip -r "../lekkerchat-firefox.zip" .
 cd ../..
 
 echo "✓ Distribution packages created:"
-echo "  - dist/twitch-chat-sync-chrome.zip"
-echo "  - dist/twitch-chat-sync-firefox.zip"
+echo "  - dist/lekkerchat-chrome.zip"
+echo "  - dist/lekkerchat-firefox.zip"
 
 echo ""
 echo "Next steps:"
