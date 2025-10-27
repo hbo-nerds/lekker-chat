@@ -58,9 +58,3 @@ cd ../..
 echo "✓ Distribution packages created:"
 echo "  - dist/lekkerchat-chrome.zip"
 echo "  - dist/lekkerchat-firefox.zip"
-
-echo ""
-echo "Next steps:"
-echo "1. Add icon files to icons/ directories"
-echo "2. Test both extensions in their respective browsers"
-echo "3. Submit to Chrome Web Store and Firefox Add-ons"
