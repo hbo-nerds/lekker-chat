@@ -287,7 +287,7 @@ async function updateStatus() {
             });
 
             if (response && !response.isLekkerSpelen) {
-                setStatus('Niet op een Lekker Spelen video', 'inactive');
+                setStatus('Geen chat-data gevonden', 'inactive');
                 return;
             }
         } catch (error) {

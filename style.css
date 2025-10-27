@@ -5,20 +5,20 @@
     font-style: normal;
 }
 
-#chat-container {
+#lekker-chat-container {
     background-color: rgb(24, 24, 27);
     height: 750px;
     border-radius: 7px;
 }
 
-#chat {
+#lekker-chat {
     display: flex;
     flex-direction: column;
     height: 100%;
     justify-content: flex-end;
 }
 
-#chat .chat-message-list {
+#lekker-chat .chat-message-list {
     display: flex;
     flex-wrap: wrap;
     align-items: flex-end;
@@ -31,17 +31,17 @@
     color: rgb(222, 222, 227);
 }
 
-#chat ul {
+#lekker-chat ul {
     overflow-y: scroll;
     overflow-x: hidden;
 }
 
-#chat li {
+#lekker-chat li {
     list-style-position: inside;
     width: 100%;
 }
 
-#chat .vod-message {
+#lekker-chat .vod-message {
     padding-bottom: .25rem;
     padding-inline-start: .5rem;
     padding-top: .25rem;
@@ -53,43 +53,43 @@
     width: 100%;
 }
 
-#chat .chat-badge {
+#lekker-chat .chat-badge {
     margin-inline-end: .3rem;
     margin-bottom: .15rem;
     vertical-align: middle;
 }
 
-#chat .message-box {
+#lekker-chat .message-box {
     display: flex;
     flex-wrap: nowrap;
     align-items: flex-start;
 }
 
-#chat .message-box-inner {
+#lekker-chat .message-box-inner {
     flex-grow: 1;
 }
 
-#chat .badge-box {
+#lekker-chat .badge-box {
     display: inline;
 }
 
-#chat .chat-author-link {
+#lekker-chat .chat-author-link {
     text-decoration: none;
 }
 
-#chat .chat-author__display-name {
+#lekker-chat .chat-author__display-name {
     font-weight: 700;
 }
 
-#chat .video-chat__message {
+#lekker-chat .video-chat__message {
     display: inline;
 }
 
-#chat .colon {
+#lekker-chat .colon {
     padding-right: 0.5rem;
 }
 
-#chat .chat-image__container {
+#lekker-chat .chat-image__container {
     height: 2.8rem;
     margin: -.4rem 0;
     width: 2.8rem;
@@ -97,17 +97,17 @@
     text-align: center;
 }
 
-#chat .chat-emote {
+#lekker-chat .chat-emote {
     display: inline;
 }
 
-#chat .chat-image.chat-line__message--emote {
+#lekker-chat .chat-image.chat-line__message--emote {
     margin: -.5rem 0;
     position: relative;
     vertical-align: middle;
 }
 
-#chat .chat-line__message--emote {
+#lekker-chat .chat-line__message--emote {
     pointer-events: all;
     margin: -.5rem 0;
     position: relative;

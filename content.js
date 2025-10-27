@@ -12,7 +12,8 @@ const CONSTANTS = {
     CHAT_CHECK_INTERVAL: 1000,
     VIDEO_CHECK_INTERVAL: 500,
     SKIP_THRESHOLD: 15,
-    PREVIOUS_MESSAGES_COUNT: 25
+    PREVIOUS_MESSAGES_COUNT: 25,
+    MAX_CHAT_MESSAGES: 100
 };
 
 // Global state
@@ -156,6 +157,35 @@ function createChatMessage(msg) {
 // Variables already declared at top of file
 
 /**
+ * Check if the chat is scrolled to the bottom
+ * @returns {boolean} True if user is at the bottom of the chat
+ */
+function isScrolledToBottom() {
+    if (!messageList) return false;
+    return Math.abs(messageList.scrollTop + messageList.clientHeight - messageList.scrollHeight) < 5;
+}
+
+/**
+ * Remove oldest chat messages when limit is exceeded
+ * Only removes if autoscroll is active (user is at bottom)
+ */
+function limitChatMessages() {
+    if (!messageList || !config?.autoScroll) {
+        return;
+    }
+
+    // Only limit messages if user is scrolled to bottom (autoscroll active)
+    if (!isScrolledToBottom()) {
+        return;
+    }
+
+    const messages = messageList.children;
+    while (messages.length > CONSTANTS.MAX_CHAT_MESSAGES) {
+        messageList.removeChild(messages[0]);
+    }
+}
+
+/**
  * Display a chat message and handle auto-scrolling
  * @param {Object} comment - Comment data to display
  */
@@ -165,14 +195,17 @@ function showMessage(comment) {
         return;
     }
 
-    const isAtBottom = messageList.scrollTop == null ? false :
-        Math.abs(messageList.scrollTop + messageList.clientHeight - messageList.scrollHeight) < 5;
+    const wasAtBottom = isScrolledToBottom();
 
     shownMessages.add(comment);
     const messageElement = createChatMessage(comment);
     messageList.appendChild(messageElement);
 
-    if (isAtBottom) {
+    // Limit messages if needed
+    limitChatMessages();
+
+    // Only auto-scroll if user was at bottom and autoscroll is enabled
+    if (wasAtBottom && config?.autoScroll) {
         messageList.scrollTop = messageList.scrollHeight;
     }
 }
@@ -188,9 +221,22 @@ function injectChat(chatContainer) {
     }
 
     try {
-        chatContainer.innerHTML = "";
-        messageList = chatContainer.appendChild(document.createElement("ul"));
+        // Create our custom chat container with unique ID
+        const customChatContainer = document.createElement("div");
+        customChatContainer.id = "lekker-chat-container";
+
+        const customChat = document.createElement("div");
+        customChat.id = "lekker-chat";
+
+        messageList = document.createElement("ul");
         messageList.className = "chat-message-list";
+
+        customChat.appendChild(messageList);
+        customChatContainer.appendChild(customChat);
+
+        // Clear the original container and add our custom one
+        chatContainer.innerHTML = "";
+        chatContainer.appendChild(customChatContainer);
 
         console.log("Successfully injected Twitch chat interface!");
     } catch (error) {
@@ -397,6 +443,34 @@ async function initConfig() {
 }
 
 /**
+ * Calculate automatic time offset based on video length and last chat message
+ * @param {number} videoDuration - Duration of the YouTube video in seconds
+ * @param {Array} comments - Array of chat comments
+ * @returns {number} Calculated offset in seconds
+ */
+function calculateAutoOffset(videoDuration, comments) {
+    if (!videoDuration || !comments || comments.length === 0) {
+        return 362; // Default fallback
+    }
+
+    try {
+        // Find the last message's content offset
+        const lastMessage = comments[comments.length - 1];
+        const lastMessageOffset = lastMessage.content_offset_seconds;
+
+        // Calculate offset: video length - last message offset
+        const calculatedOffset = Math.round(videoDuration - lastMessageOffset);
+
+        console.log(`Auto-calculated offset: ${videoDuration}s (video) - ${lastMessageOffset}s (last message) = ${calculatedOffset}s`);
+
+        return calculatedOffset;
+    } catch (error) {
+        console.error('Error calculating auto offset:', error);
+        return 362; // Default fallback
+    }
+}
+
+/**
  * Get current time offset
  */
 function getTimeOffset() {
@@ -421,31 +495,11 @@ function getChatUrl(videoId) {
  * Check if the current video is a Lekker Spelen video
  */
 function isLekkerSpelen() {
-    // Check for common Lekker Spelen indicators
-    const title = document.title.toLowerCase();
-    const channelElement = document.querySelector('#channel-name a, .ytd-channel-name a, ytd-video-owner-renderer a');
-    const channelName = channelElement ? channelElement.textContent.toLowerCase() : '';
-
-    const lekkerIndicators = [
-        'lekker spelen',
-        'lekker-spelen',
-        'lekkerspelen'
-    ];
-
-    // Check if title or channel contains Lekker Spelen indicators
-    const isLekker = lekkerIndicators.some(indicator =>
-        title.includes(indicator) || channelName.includes(indicator)
-    );
-
-    // Also check if we have chat data for this video (from yt-ttv.json mapping)
+    // Check if we have chat data for this video (from yt-ttv.json mapping)
     const urlParams = new URLSearchParams(window.location.search);
     const videoId = urlParams.get("v");
 
-    if (videoId && ttvLink && ttvLink[videoId]) {
-        return true; // We have chat data for this video
-    }
-
-    return isLekker;
+    return videoId && ttvLink && ttvLink[videoId]
 }
 
 /**
@@ -524,10 +578,26 @@ function refreshChatWithNewOffset() {
     showPreviousMessages(currentSecond);
 }
 
+// Track whether we found manual offset data
+let hasManualOffsetData = false;
+
+/**
+ * Check if manual offset data was loaded from GitHub
+ * @param {string} videoId - YouTube video ID
+ * @returns {boolean} True if manual offset was found and applied
+ */
+function checkForManualOffset(videoId) {
+    return hasManualOffsetData;
+}
+
 /**
  * Load offset data from GitHub and apply to config
+ * @param {string} videoId - YouTube video ID
+ * @returns {Promise<boolean>} True if manual offset was found and applied
  */
 async function loadAndApplyOffsetData(videoId) {
+    hasManualOffsetData = false;
+
     try {
         console.log('Loading offset data from GitHub for video:', videoId);
 
@@ -544,7 +614,7 @@ async function loadAndApplyOffsetData(videoId) {
 
             if (offsetData && offsetData[videoId]) {
                 const suggestedOffset = offsetData[videoId];
-                console.log('Found suggested offset for this video:', suggestedOffset, 'seconds');
+                console.log('Found manual offset for this video:', suggestedOffset, 'seconds');
 
                 // Update config with suggested offset
                 if (!config) {
@@ -555,9 +625,11 @@ async function loadAndApplyOffsetData(videoId) {
                 // Also save to storage so popup shows the correct value
                 await browserAPI.storage.local.set({ timeOffset: suggestedOffset });
 
-                console.log('Applied suggested offset:', suggestedOffset);
+                hasManualOffsetData = true;
+                console.log('Applied manual offset:', suggestedOffset);
+                return true;
             } else {
-                console.log('No offset data found for this video');
+                console.log('No manual offset data found for this video');
             }
         } else {
             console.log('GitHub offset data returned status:', response.status);
@@ -565,6 +637,8 @@ async function loadAndApplyOffsetData(videoId) {
     } catch (error) {
         console.log('Could not load offset data from GitHub:', error.message);
     }
+
+    return false;
 }
 
 /**
@@ -616,6 +690,27 @@ const init = async () => {
         chatData = await chatResponse.json();
 
         console.log(`Loaded chat data with ${chatData.comments?.length || 0} messages`);
+
+        // Calculate auto offset if no manual offset was found in GitHub data
+        const video = await getVideoElement();
+        if (video && video.duration && chatData.comments && chatData.comments.length > 0) {
+            const videoDuration = Math.floor(video.duration);
+
+            // Check if we already have a manual offset from GitHub data
+            const hasManualOffset = await checkForManualOffset(videoId);
+
+            if (!hasManualOffset) {
+                const autoOffset = calculateAutoOffset(videoDuration, chatData.comments);
+
+                // Update config with auto-calculated offset
+                config.timeOffset = autoOffset;
+
+                // Save to storage so popup shows the correct value
+                await browserAPI.storage.local.set({ timeOffset: autoOffset });
+
+                console.log('Applied auto-calculated offset:', autoOffset);
+            }
+        }
 
         // Initialize UI and video sync
         await waitForChatContainer();
